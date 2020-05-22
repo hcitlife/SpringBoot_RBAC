@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hc.mapper.AdminMapper">
+    <resultMap id="BaseResultMap" type="com.hc.domain.Admin">
+        <!--@mbg.generated-->
+        <!--@Table db_rbac.tb_admin-->
+        <id column="id" property="id"/>
+        <result column="account" property="account"/>
+        <result column="password" property="password"/>
+        <result column="nickname" property="nickname"/>
+        <result column="gender" property="gender"/>
+        <result column="img" property="img"/>
+        <result column="qq" property="qq"/>
+        <result column="tel" property="tel"/>
+        <result column="email" property="email"/>
+        <result column="level" property="level"/>
+        <result column="info" property="info"/>
+        <result column="status" property="status"/>
+        <result column="createTime" property="createTime"/>
+        <result column="updateTime" property="updateTime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, account, `password`, nickname, gender, img, qq, tel, email, `level`, info, `status`,
+        createTime, updateTime
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        <!--@mbg.generated-->
+        select
+        <include refid="Base_Column_List"/>
+        from db_rbac.tb_admin
+        where id = #{id}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        <!--@mbg.generated-->
+        delete from db_rbac.tb_admin
+        where id = #{id}
+    </delete>
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.hc.domain.Admin" useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into db_rbac.tb_admin (account, `password`, nickname, gender, img, qq, tel, email,
+        `level`, info, `status`, createTime, updateTime)
+        values (#{account}, #{password}, #{nickname}, #{gender}, #{img}, #{qq}, #{tel}, #{email},
+        #{level}, #{info}, #{status}, #{createTime}, #{updateTime})
+    </insert>
+    <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.hc.domain.Admin" useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into db_rbac.tb_admin
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="account != null">
+                account,
+            </if>
+            <if test="password != null">
+                `password`,
+            </if>
+            <if test="nickname != null">
+                nickname,
+            </if>
+            <if test="gender != null">
+                gender,
+            </if>
+            <if test="img != null">
+                img,
+            </if>
+            <if test="qq != null">
+                qq,
+            </if>
+            <if test="tel != null">
+                tel,
+            </if>
+            <if test="email != null">
+                email,
+            </if>
+            <if test="level != null">
+                `level`,
+            </if>
+            <if test="info != null">
+                info,
+            </if>
+            <if test="status != null">
+                `status`,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+            <if test="updateTime != null">
+                updateTime,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="account != null">
+                #{account},
+            </if>
+            <if test="password != null">
+                #{password},
+            </if>
+            <if test="nickname != null">
+                #{nickname},
+            </if>
+            <if test="gender != null">
+                #{gender},
+            </if>
+            <if test="img != null">
+                #{img},
+            </if>
+            <if test="qq != null">
+                #{qq},
+            </if>
+            <if test="tel != null">
+                #{tel},
+            </if>
+            <if test="email != null">
+                #{email},
+            </if>
+            <if test="level != null">
+                #{level},
+            </if>
+            <if test="info != null">
+                #{info},
+            </if>
+            <if test="status != null">
+                #{status},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.hc.domain.Admin">
+        <!--@mbg.generated-->
+        update db_rbac.tb_admin
+        <set>
+            <if test="account != null">
+                account = #{account},
+            </if>
+            <if test="password != null">
+                `password` = #{password},
+            </if>
+            <if test="nickname != null">
+                nickname = #{nickname},
+            </if>
+            <if test="gender != null">
+                gender = #{gender},
+            </if>
+            <if test="img != null">
+                img = #{img},
+            </if>
+            <if test="qq != null">
+                qq = #{qq},
+            </if>
+            <if test="tel != null">
+                tel = #{tel},
+            </if>
+            <if test="email != null">
+                email = #{email},
+            </if>
+            <if test="level != null">
+                `level` = #{level},
+            </if>
+            <if test="info != null">
+                info = #{info},
+            </if>
+            <if test="status != null">
+                `status` = #{status},
+            </if>
+            <if test="createTime != null">
+                createTime = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                updateTime = #{updateTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.hc.domain.Admin">
+        <!--@mbg.generated-->
+        update db_rbac.tb_admin
+        set account = #{account},
+        `password` = #{password},
+        nickname = #{nickname},
+        gender = #{gender},
+        img = #{img},
+        qq = #{qq},
+        tel = #{tel},
+        email = #{email},
+        `level` = #{level},
+        info = #{info},
+        `status` = #{status},
+        createTime = #{createTime},
+        updateTime = #{updateTime}
+        where id = #{id}
+    </update>
+
+    <select id="selectByCondition" resultMap="BaseResultMap" parameterType="com.hc.domain.Admin">
+        select
+        <include refid="Base_Column_List"/>
+        from db_rbac.tb_admin
+        <where>
+            <if test="id != null">
+                or id=#{id}
+            </if>
+            <if test="account != null">
+                or account like CONCAT(CONCAT('%',#{account}),'%')
+            </if>
+            <if test="nickname != null">
+                or nickname like CONCAT(CONCAT('%',#{nickname}),'%')
+            </if>
+            <if test="gender != null">
+                or gender=#{gender}
+            </if>
+            <if test="qq != null">
+                or qq like CONCAT(CONCAT('%',#{qq}),'%')
+            </if>
+            <if test="tel != null">
+                or tel like CONCAT(CONCAT('%',#{tel}),'%')
+            </if>
+            <if test="email != null">
+                or email like CONCAT(CONCAT('%',#{email}),'%')
+            </if>
+            <if test="info != null">
+                or info like CONCAT(CONCAT('%',#{info}),'%')
+            </if>
+            <if test="status != null">
+                or `status`=#{status}
+            </if>
+            <if test="time1 != null and time2 != null ">
+                <![CDATA[
+                      or (
+                      DATE_FORMAT(createTime, '%Y-%m-%d') >=  DATE_FORMAT(#{time1}, '%Y-%m-%d') and  DATE_FORMAT(createTime, '%Y-%m-%d') <=  DATE_FORMAT(#{time2}, '%Y-%m-%d')
+                      )
+                ]]>
+            </if>
+        </where>
+    </select>
+
+</mapper>

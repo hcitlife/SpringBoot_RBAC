@@ -1,0 +1,214 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <div th:replace="common/meta :: common_meta"></div>
+    <title>员工列表</title>
+    </head>
+    <body>
+        <nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 管理员管理 <span class="c-gray en">&gt;</span> 管理员列表 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新"><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+        <div class="page-container">
+            <div class="text-c"> 日期范围：
+                <input type="text" onfocus="WdatePicker({ maxDate:'#F{$dp.$D(\'datemax\')||\'%y-%M-%d\'}' })" id="datemin" class="input-text Wdate" style="width:120px;">
+                -
+                <input type="text" onfocus="WdatePicker({ minDate:'#F{$dp.$D(\'datemin\')}',maxDate:'%y-%M-%d' })" id="datemax" class="input-text Wdate" style="width:120px;">
+                <input type="text" class="input-text" style="width:250px" placeholder="输入管理员名称" id="" name="">
+                <button type="submit" class="btn btn-success" id="" name=""><i class="Hui-iconfont">&#xe665;</i> 搜用户</button>
+            </div>
+            <div class="cl pd-5 bg-1 bk-gray mt-20"><span class="l"><a href="javascript:;" onclick="datadel()" class="btn btn-danger radius"><i class="Hui-iconfont">&#xe6e2;</i> 批量删除</a> <a href="javascript:;" onclick="admin_add('添加管理员','admin-add.html','800','500')" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 添加管理员</a></span> <span class="r">共有数据：<strong>54</strong> 条</span></div>
+            <!--            <table class="table table-border table-bordered table-bg">-->
+            <table class="table table-border table-bordered table-bg table-hover table-sort table-responsive" id="adminTable">
+                <thead>
+                    <tr>
+                        <th scope="col" colspan="9">员工列表</th>
+                    </tr>
+                    <tr class="text-c">
+                        <th width="25"><input type="checkbox" name="" value=""></th>
+                        <th width="40">ID</th>
+                        <th width="120">账号</th>
+                        <th width="150">大头相</th>
+                        <th width="120">昵称</th>
+                        <th width="60">性别</th>
+                        <th width="120">QQ</th>
+                        <th width="120">电话</th>
+                        <th width="180">邮箱</th>
+                        <th width="150">加入时间</th>
+                        <th width="100">角色</th>
+                        <th width="80">是否已启用</th>
+                        <th width="60">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+
+        <div th:replace="common/footer :: common_javascript"></div>
+
+        <!--请在下方写此页面业务相关的脚本-->
+        <script type="text/javascript" th:src="@{/lib/My97DatePicker/4.8/WdatePicker.js}"></script>
+        <script type="text/javascript" th:src="@{/lib/datatables/1.10.0/jquery.dataTables.min.js}"></script>
+        <script type="text/javascript" th:src="@{/lib/laypage/1.2/laypage.js}"></script>
+
+
+        <script type="text/javascript">
+            let table;
+            $(function () {
+                table = $("#adminTable").dataTable({
+                    "bProcessing": false,//是否显示取数据时的那个等待提示
+                    "bServerSide": true,//这个用来指明是通过服务端来取数据
+                    "sAjaxSource": baseUrl + "admin/list",//给服务器发请求的url
+                    "fnServerData": retrieveData,//获取数据的处理函数
+                    "aoColumns": [ //这个属性下的设置会应用到所有列，按顺序没有是空
+                        {
+                            "mData": "id",  //用来指定下面data参数的值
+                            render: function (data, type, full, meta) {//meta包含当前行的索引,当前DataTables控件的setttings对象,当前DataTables控件的setttings对象,row,colsettings
+                                return '<input type="checkbox" name="adminCheckBox" value="' + data + '" />';
+                            }
+                        },
+                        {"mData": 'id'}
+                        , //mData 表示发请求时候本列的列明，返回的数据中相同下标名字的数据会填充到这一列
+                        {"mData": 'account'},
+                        {"mData": 'img'},
+                        {"mData": 'nickname'},
+                        {"mData": 'gender'},
+                        {"mData": 'qq'},
+                        {"mData": 'tel'},
+                        {"mData": 'email'},
+                        {"mData": 'createTime'},
+                        {"mData": 'email'},
+                        {"mData": 'status'},
+                        {
+                            "mData": "id",
+                            render: function (data, type, full, meta) {//meta包含当前行的索引,当前DataTables控件的setttings对象,当前DataTables控件的setttings对象,row,colsettings
+                                return '<a href="javascript:;" th:onClick="admin_enable(this,' + data + ')" title="启用" style="text-decoration:none" th:unless="${user.status ==1}">' +
+                                    '<i class="Hui-iconfont">&#xe615;</i>' +
+                                    '</a>' +
+                                    '<a title="编辑" href="javascript:;"  class="ml-5" style="text-decoration:none">' +
+                                    '<i class="Hui-iconfont">&#xe6df;</i>' +
+                                    '</a>' +
+                                    '<a title="删除" href="javascript:;" class="ml-5" style="text-decoration:none">' +
+                                    '<i class="Hui-iconfont">&#xe6e2;</i>' +
+                                    '</a>';
+                            }
+                        },
+                    ]
+                });
+            });
+
+            //3个参数的名字可以随便命名,但必须是3个参数,少一个都不行
+            function retrieveData(sSource, aoData, fnCallback) {
+                $.ajax({
+                    url: sSource,//这个就是请求地址对应sAjaxSource
+                    data: {"aoData": JSON.stringify(aoData)},//这个是把datatable的一些基本数据传给后台,比如起始位置,每页显示的行数,分页,排序,查询等的值
+                    type: 'post',  //使用Post方式传递数据
+                    dataType: 'json',
+                    async: true,
+                    success: function (result) {
+                        console.info("**********");
+                        console.info(result);
+                        console.info("**********");
+                        if (result.code == 1) {
+                            fnCallback(result.data);//把返回的数据传给这个方法就可以了,datatable会自动绑定数据的
+                        }
+                    },
+                    error: function (msg) {
+                    }
+                });
+            }
+
+            //点击某行后高亮
+            $('#tb').on('click', 'tr', function () {
+                if ($(this).hasClass('selected')) {
+                    $(this).removeClass('selected');
+                } else {
+                    table.$('tr.selected').removeClass('selected');
+                    $(this).addClass('selected');
+                }
+            });
+
+
+            /*管理员-增加*/
+            function admin_add(title, url, w, h) {
+                layer_show(title, url, w, h);
+            }
+
+            /*管理员-删除*/
+            function admin_del(obj, id) {
+                layer.confirm('确认要删除吗？', function (index) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '',
+                        dataType: 'json',
+                        success: function (data) {
+                            $(obj).parents("tr").remove();
+                            layer.msg('已删除!', {icon: 1, time: 1000});
+                        },
+                        error: function (data) {
+                            console.log(data.msg);
+                        },
+                    });
+                });
+            }
+
+            /*管理员-编辑*/
+            function admin_edit(title, url, id, w, h) {
+                layer_show(title, url, w, h);
+            }
+
+            /*管理员-停用*/
+            function admin_disable(obj, userId) {
+                layer.confirm('确认要停用吗？', function (index) {
+                    $.ajax({
+                        type: 'POST',
+                        url: baseUrl + 'user/enableDisable',
+                        data: {
+                            id: userId,
+                            'status': 0
+                        },
+                        dataType: 'json',
+                        success: function (res) {
+                            if (res.code == 1) {
+                                $(obj).parents("tr").find(".td-manage").prepend('<a onClick="admin_enable(this,' + res.data + ')" href="javascript:;" title="启用" style="text-decoration:none"><i class="Hui-iconfont">&#xe615;</i></a>');
+                                $(obj).parents("tr").find(".td-status").html('<span class="label label-default radius">已停用</span>');
+                                $(obj).remove();
+                                layer.msg('已停用!', {icon: 5, time: 1000});
+                            } else {
+                                layer.msg('停用失败!', {icon: 5, time: 1000});
+                            }
+                        },
+                        error: function (data) {
+                            console.log(data.msg);
+                        },
+                    });
+                });
+            }
+
+            /*管理员-启用*/
+            function admin_enable(obj, userId) {
+                layer.confirm('确认要启用吗？', function (index) {
+                    $.ajax({
+                        type: 'POST',
+                        url: baseUrl + 'user/enableDisable',
+                        data: {
+                            id: userId,
+                            'status': 1
+                        },
+                        dataType: 'json',
+                        success: function (res) {
+                            if (res.code == 1) {
+                                $(obj).parents("tr").find(".td-manage").prepend('<a onClick="admin_disable(this,userId)" href="javascript:;" title="停用" style="text-decoration:none"><i class="Hui-iconfont">&#xe631;</i></a>');
+                                $(obj).parents("tr").find(".td-status").html('<span class="label label-success radius">已启用</span>');
+                                $(obj).remove();
+                                layer.msg('已启用!', {icon: 6, time: 1000});
+                            } else {
+                                layer.msg('启用失败!', {icon: 5, time: 1000});
+                            }
+                        },
+                        error: function (data) {
+                            console.log(data.msg);
+                        },
+                    });
+                });
+            }
+        </script>
+    </body>
+</html>
